@@ -3,60 +3,55 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
 class User(db.Model):
+    __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
-    first_name = db.Column(db.String(120), unique=True, nullable=False)
-    last_name = db.Column(db.String(120), unique=True, nullable=False)
+    username = db.Column(db.String(120), unique=True, nullable=False)
+    first_name = db.Column(db.String(120), unique= False, nullable=False)
+    last_name = db.Column(db.String(120), unique=False, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(80), unique=False, nullable=False)
+    favorite_planets = db.relationship("Favorite", back_populates="planet")
 
-    def __repr__(self):
-        return '<User %r>' % self.username
+    def to_dict(self):
+        return {
+        '<user %s>' % self.user
+        }
+
 
     def serialize(self):
         return {
             "id": self.id,
+            "username": self.username,
             "first_name": self.first_name,
-            "last_name": self.first_name,
-            "email": self.email
+            "last_name": self.last_name,
+            "email": self.email,
             # do not serialize the password, its a security breach
         }
 
-# User
-# -
-# id int PK
-# first_name string
-# last_name string
-# email string
-# password string
+class Favorite(db.Model):
+    __tablename__ = 'favorite'
+    user_id = db.Column(db.ForeignKey('user.id'), primary_key=True)
+    planet_id = db.Column(db.ForeignKey('planet.id'), primary_key=True)
+    character_id = db.Column(db.ForeignKey('character.id'), primary_key=True)
+    vehicle_id = db.Column(db.ForeignKey('vehicle.id'), primary_key=True)
+    user = db.relationship("Planet", back_populates="users")
+    planet = db.relationship("User", back_populates="favorite_planets")
 
-class Favorites(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, foreign_key=True)
-    character_id = db.Column(db.Integer, foreign_key=True)
-    vehicle_id = db.Column(db.Integer, foreign_key=True)
-    planet_id = db.Column(db.Integer, foreign_key=True)
+    def to_dict(self):
+        return {
+        '<favorite %s>' % self.favorite
+        }
 
-    def __repr__(self):
-        return '<User %r>' % self.username
 
     def serialize(self):
         return {
-            "id": self.id,
-            "user_id": self.user_id,
             "character_id": self.character_id,
             "vehicle_id": self.vehicle_id,
-            "planet_id": self.planet_id
+            "planet_id": self.planet_id,
+            "user_id": self.user_id
         }
-
-# Favorites
-# -
-# id int PK
-# user_id int
-# character_id int
-# vehicle_id  int
-# planet_id   int
-
-class Characters(db.Model):
+class Character(db.Model):
+    __tablename__ = 'character'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), unique=False, nullable=False)
     height = db.Column(db.String(120), unique=False, nullable=False)
@@ -66,7 +61,7 @@ class Characters(db.Model):
     gender = db.Column(db.String(120), unique=False, nullable=False)
 
     def __repr__(self):
-        return '<User %r>' % self.username
+        return '<character %r>' % self.username
 
     def serialize(self):
         return {
@@ -79,52 +74,38 @@ class Characters(db.Model):
             "gender": self.gender
         }
 
-# Characters
-# -
-# id int PK
-# name string
-# height string
-# hair_color string
-# eye_color string
-# birth_year string
-# gender string
-
-class Planets(db.Model):
+class Planet(db.Model):
+    __tablename__ = 'planet'
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(120), unique=False, nullable=False)
+    name = db.Column(db.String(120), unique=True, nullable=False)
+    population = db.Column(db.Integer, unique=False, nullable=False)
+    terrain = db.Column(db.String(120), unique=False, nullable=False)
+    climate = db.Column(db.String(120), unique=False, nullable=False)
     diameter = db.Column(db.Integer, unique=False, nullable=False)
     gravity = db.Column(db.String(120), unique=False, nullable=False)
-    population = db.Column(db.Integer, unique=False, nullable=False)
-    climate = db.Column(db.String(120), unique=False, nullable=False)
-    terrain = db.Column(db.String(120), unique=False, nullable=False)
+    users = db.relationship("Favorite", back_populates="user")
 
-    def __repr__(self):
-        return '<User %r>' % self.username
+    def to_dict(self):
+        return {
+        '<planet %s>' % self.planet
+        }
+
 
     def serialize(self):
         return {
             "id": self.id,
             "name": self.name,
-            "diameter": self.diameter,
-            "gravity": self.gravity,
             "population": self.population,
+            "terrain": self.terrain,
+            "gravity": self.gravity,
             "climate": self.climate,
-            "terrain": self.terrain
+            "diameter": self.diameter
         }
 
-# Planets
-# -
-# id int PK
-# name string
-# diameter int
-# gravity string
-# population int
-# climate string
-# terrain string
-
-class Vehicles(db.Model):
+class Vehicle(db.Model):
+    __tablename__ = 'vehicle'
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(120), unique=False, nullable=False)
+    name = db.Column(db.String(120), unique=True, nullable=False)
     model = db.Column(db.String(120), unique=False, nullable=False)
     manufaturer = db.Column(db.String(120), unique=False, nullable=False)
     cost_in_credits = db.Column(db.Integer, unique=False, nullable=False)
@@ -132,7 +113,7 @@ class Vehicles(db.Model):
     vehicle_class = db.Column(db.String(120), unique=False, nullable=False)
 
     def __repr__(self):
-        return '<User %r>' % self.username
+        return '<vehicle %r>' % self.username
 
     def serialize(self):
         return {
@@ -144,13 +125,3 @@ class Vehicles(db.Model):
             "cargo_capacity": self.cargo_capacity,
             "vehicle_class": self.vehicle_class
         }
-
-# Vehicles
-# -
-# id int PK
-# name string
-# model string
-# manufaturer string
-# cost_in_credits int
-# cargo_capacity int
-# vehicle_class string

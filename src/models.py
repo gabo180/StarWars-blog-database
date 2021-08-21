@@ -5,11 +5,11 @@ db = SQLAlchemy()
 class User(db.Model):
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(120), unique=True, nullable=False)
+    username = db.Column(db.String(120), unique=False, nullable=False)
     first_name = db.Column(db.String(120), unique= False, nullable=False)
     last_name = db.Column(db.String(120), unique=False, nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    password = db.Column(db.String(80), unique=False, nullable=False)
+    email = db.Column(db.String(120), unique=False, nullable=False)
+    # password = db.Column(db.String(80), unique=False, nullable=False)
     favorite_planets = db.relationship("Favorite", back_populates="planet")
 
     def to_dict(self):
@@ -77,7 +77,7 @@ class Character(db.Model):
 class Planet(db.Model):
     __tablename__ = 'planet'
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(120), unique=True, nullable=False)
+    name = db.Column(db.String(120), unique=False, nullable=False)
     population = db.Column(db.Integer, unique=False, nullable=False)
     terrain = db.Column(db.String(120), unique=False, nullable=False)
     climate = db.Column(db.String(120), unique=False, nullable=False)
@@ -105,7 +105,7 @@ class Planet(db.Model):
 class Vehicle(db.Model):
     __tablename__ = 'vehicle'
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(120), unique=True, nullable=False)
+    name = db.Column(db.String(120), unique=False, nullable=False)
     model = db.Column(db.String(120), unique=False, nullable=False)
     manufaturer = db.Column(db.String(120), unique=False, nullable=False)
     cost_in_credits = db.Column(db.Integer, unique=False, nullable=False)
@@ -121,7 +121,7 @@ class Vehicle(db.Model):
             "name": self.name,
             "model": self.model,
             "manufaturer": self.manufaturer,
-            "cost_in_credits": self.population,
+            "cost_in_credits": self.cost_in_credits,
             "cargo_capacity": self.cargo_capacity,
             "vehicle_class": self.vehicle_class
         }

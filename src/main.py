@@ -82,20 +82,6 @@ def post_planet():
     db.session.add(planet1)
     db.session.commit()
     return jsonify(planet1.serialize())
-    # new_name = request.form['name']
-    # name = Clients(name=new_name)
-    # session.add(name)
-    # session.commit()
-    # request_data = request.data
-    # print(request_data)
-    # # body = json.loads(request_data)
-    # planet = request_data['name']
-    # db.session.add(planet)
-    # db.session.commit()
-    # return jsonify(planet.serialize())
-
-    # user1 = Person(username=body['username'], email=body['email'])
-
 
 @app.route('/character', methods=['POST'])
 def post_character():

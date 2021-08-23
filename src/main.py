@@ -60,19 +60,12 @@ def get_vehicle():
 
 @app.route('/user', methods=['POST'])
 def post_user():
-    user1 = User(username="my_super_usernasssme0", email="my_super87@email.com", first_name="gabriel", last_name="hernandez")
+    request_data = request.data
+    body = json.loads(request_data)
+    user1 = User(username=body['username'], email=body['email'], first_name=body['first_name'], last_name=body['last_name'])
     db.session.add(user1)
     db.session.commit()
     return jsonify(user1.serialize())
-    # user1 = Person.query.get(person_id)
-    # if user1 is None:
-    #     raise APIException('User not found', status_code=404)
-
-    # if "username" in body:
-    #     user1.username = body["username"]
-    # if "email" in body:
-    #     user1.email = body["email"]
-    # db.session.commit()
 
 @app.route('/planet', methods=['POST'])
 def post_planet():
@@ -85,14 +78,18 @@ def post_planet():
 
 @app.route('/character', methods=['POST'])
 def post_character():
-    char1 = Character(name="Luke Skywalker", height="172", hair_color="Blond", eye_color="Blue", birth_year="19BBY", gender="male")
+    request_data = request.data
+    body = json.loads(request_data)
+    char1 = Character(name=body['name'], height=body['height'], hair_color=body['hair_color'], eye_color=body['eye_color'], birth_year=body['birth_year'], gender=body['gender'])
     db.session.add(char1)
     db.session.commit()
     return jsonify(char1.serialize())
 
 @app.route('/vehicle', methods=['POST'])
 def post_vehicle():
-    vehicle1 = Vehicle(name="Sand Crawler", model="Digger Crawler", manufaturer="Corellia Mining Corporation", cost_in_credits=150000, cargo_capacity=50000, vehicle_class="wheeled")
+    request_data = request.data
+    body = json.loads(request_data)
+    vehicle1 = Vehicle(name=body['name'], model=body['model'], manufaturer=body['manufaturer'], cost_in_credits=body['cost_in_credits'], cargo_capacity=body['cargo_capacity'], vehicle_class=body['vehicle_class'])
     db.session.add(vehicle1)
     db.session.commit()
     return jsonify(vehicle1.serialize())

@@ -8,7 +8,7 @@ from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, User, Planet, Character, Vehicle
+from models import db, User, Planet, Character, Vehicle, Favorite
 #from models import Person
 
 app = Flask(__name__)
@@ -37,12 +37,26 @@ def get_user():
     map_users = [u.serialize() for u in users]
     return jsonify(map_users), 200
 
+@app.route('/user/<int:user_id>', methods=['GET'])
+def get_single_user(user_id):
+
+    single_user = User.query.get(user_id)
+    single_user = single_user.serialize()
+    return jsonify(single_user), 200
+
 @app.route('/planet', methods=['GET'])
 def get_planet():
 
     planets = Planet.query.all()
     map_planets = [u.serialize() for u in planets]
     return jsonify(map_planets), 200
+
+@app.route('/planet/<int:planet_id>', methods=['GET'])
+def get_single_planet(planet_id):
+
+    single_planet = Planet.query.get(planet_id)
+    single_planet = single_planet.serialize()
+    return jsonify(single_planet), 200
 
 @app.route('/character', methods=['GET'])
 def get_char():
@@ -51,12 +65,26 @@ def get_char():
     map_chars = [u.serialize() for u in chars]
     return jsonify(map_chars), 200
 
+@app.route('/character/<int:character_id>', methods=['GET'])
+def get_single_character(character_id):
+
+    single_character = Character.query.get(character_id)
+    single_character = single_character.serialize()
+    return jsonify(single_character), 200
+
 @app.route('/vehicle', methods=['GET'])
 def get_vehicle():
 
     vehicles = Vehicle.query.all()
     map_vehicles = [u.serialize() for u in vehicles]
     return jsonify(map_vehicles), 200
+
+@app.route('/vehicle/<int:vehicle_id>', methods=['GET'])
+def get_single_vehicle(vehicle_id):
+
+    single_vehicle = Vehicle.query.get(vehicle_id)
+    single_vehicle = single_vehicle.serialize()
+    return jsonify(single_vehicle), 200
 
 @app.route('/user', methods=['POST'])
 def post_user():
@@ -93,6 +121,14 @@ def post_vehicle():
     db.session.add(vehicle1)
     db.session.commit()
     return jsonify(vehicle1.serialize())
+
+@app.route('/user/favorite', methods=['GET'])
+def user_favorite():
+    request_data = request.data
+    body = json.loads(request_data)
+    favorite_query = Favorite.query.filter_by(user_id = 1)
+    map_favorite = [item.serialize() for item in favorite_query]
+    return jsonify(map_favorite)
 
 
 # this only runs if `$ python src/main.py` is executed

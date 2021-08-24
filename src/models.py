@@ -10,7 +10,7 @@ class User(db.Model):
     last_name = db.Column(db.String(120), unique=False, nullable=False)
     email = db.Column(db.String(120), unique=False, nullable=False)
     # password = db.Column(db.String(80), unique=False, nullable=False)
-    favorite_planets = db.relationship("Favorite", back_populates="planet")
+    # favorite_planets = db.relationship("Favorite", back_populates="planet")
 
     def to_dict(self):
         return {
@@ -30,12 +30,13 @@ class User(db.Model):
 
 class Favorite(db.Model):
     __tablename__ = 'favorite'
+    id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.ForeignKey('user.id'), primary_key=True)
     planet_id = db.Column(db.ForeignKey('planet.id'), primary_key=True)
     character_id = db.Column(db.ForeignKey('character.id'), primary_key=True)
     vehicle_id = db.Column(db.ForeignKey('vehicle.id'), primary_key=True)
-    user = db.relationship("Planet", back_populates="users")
-    planet = db.relationship("User", back_populates="favorite_planets")
+    # user = db.relationship("Planet", back_populates="users")
+    # planet = db.relationship("User", back_populates="favorite_planets")
 
     def to_dict(self):
         return {
@@ -50,6 +51,7 @@ class Favorite(db.Model):
             "planet_id": self.planet_id,
             "user_id": self.user_id
         }
+
 class Character(db.Model):
     __tablename__ = 'character'
     id = db.Column(db.Integer, primary_key=True)
@@ -83,7 +85,7 @@ class Planet(db.Model):
     climate = db.Column(db.String(120), unique=False, nullable=False)
     diameter = db.Column(db.Integer, unique=False, nullable=False)
     gravity = db.Column(db.String(120), unique=False, nullable=False)
-    users = db.relationship("Favorite", back_populates="user")
+    # users = db.relationship("Favorite", back_populates="user")
 
     def to_dict(self):
         return {

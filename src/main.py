@@ -122,14 +122,60 @@ def post_vehicle():
     db.session.commit()
     return jsonify(vehicle1.serialize())
 
+@app.route('/favorite/planet/<int:planet_id>', methods=['POST'])
+def post_favorite_planet(planet_id):
+    favorite1 = Favorite(planet_id=planet_id, user_id = 1)
+    db.session.add(favorite1)
+    db.session.commit()
+    return jsonify(favorite1.serialize())
+
+@app.route('/favorite/character/<int:character_id>', methods=['POST'])
+def post_favorite_character(character_id):
+    favorite1 = Favorite(character_id=character_id, user_id = 1)
+    db.session.add(favorite1)
+    db.session.commit()
+    return jsonify(favorite1.serialize())
+
+@app.route('/favorite/vehicle/<int:vehicle_id>', methods=['POST'])
+def post_favorite_vehicle(vehicle_id):
+    favorite1 = Favorite(vehicle_id=vehicle_id, user_id = 1)
+    db.session.add(favorite1)
+    db.session.commit()
+    return jsonify(favorite1.serialize())
+
+
 @app.route('/user/favorite', methods=['GET'])
 def user_favorite():
-    request_data = request.data
-    body = json.loads(request_data)
     favorite_query = Favorite.query.filter_by(user_id = 1)
     map_favorite = [item.serialize() for item in favorite_query]
     return jsonify(map_favorite)
 
+@app.route('/favorite/planet/<int:planet_id>', methods=['DELETE'])
+def delete_favorite_planet_from_user(planet_id):
+    favorite1 = Favorite.query.filter_by(planet_id=planet_id, user_id = 1).first()
+    if favorite1 is None:
+        raise APIException('Favorite not found', status_code=404)
+    db.session.delete(favorite1)
+    db.session.commit()
+    return jsonify(None)
+
+@app.route('/favorite/character/<int:character_id>', methods=['DELETE'])
+def delete_favorite_character_from_user(character_id):
+    favorite1 = Favorite.query.filter_by(character_id=character_id, user_id = 1).first()
+    if favorite1 is None:
+        raise APIException('Favorite not found', status_code=404)
+    db.session.delete(favorite1)
+    db.session.commit()
+    return jsonify(None)
+
+@app.route('/favorite/vehicle/<int:vehicle_id>', methods=['DELETE'])
+def delete_favorite_vehicle_from_user(vehicle_id):
+    favorite1 = Favorite.query.filter_by(vehicle_id=vehicle_id, user_id = 1).first()
+    if favorite1 is None:
+        raise APIException('Favorite not found', status_code=404)
+    db.session.delete(favorite1)
+    db.session.commit()
+    return jsonify(None)
 
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':

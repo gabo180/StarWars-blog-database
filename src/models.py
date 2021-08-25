@@ -31,12 +31,13 @@ class User(db.Model):
 class Favorite(db.Model):
     __tablename__ = 'favorite'
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.ForeignKey('user.id'), primary_key=True)
-    planet_id = db.Column(db.ForeignKey('planet.id'), primary_key=True)
-    character_id = db.Column(db.ForeignKey('character.id'), primary_key=True)
-    vehicle_id = db.Column(db.ForeignKey('vehicle.id'), primary_key=True)
+    user_id = db.Column(db.ForeignKey('user.id'), nullable=False)
+    planet_id = db.Column(db.ForeignKey('planet.id'), nullable=True)
+    character_id = db.Column(db.ForeignKey('character.id'), nullable=True)
+    vehicle_id = db.Column(db.ForeignKey('vehicle.id'), nullable=True)
     # user = db.relationship("Planet", back_populates="users")
     # planet = db.relationship("User", back_populates="favorite_planets")
+
 
     def to_dict(self):
         return {

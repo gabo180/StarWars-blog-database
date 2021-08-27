@@ -9,7 +9,7 @@ class User(db.Model):
     first_name = db.Column(db.String(120), unique= False, nullable=False)
     last_name = db.Column(db.String(120), unique=False, nullable=False)
     email = db.Column(db.String(120), unique=False, nullable=False)
-    # password = db.Column(db.String(80), unique=False, nullable=False)
+    password = db.Column(db.String(80), unique=False, nullable=False)
     # favorite_planets = db.relationship("Favorite", back_populates="planet")
 
     def to_dict(self):

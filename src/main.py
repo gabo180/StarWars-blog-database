@@ -9,16 +9,36 @@ from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
 from models import db, User, Planet, Character, Vehicle, Favorite
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
+# from flask_jwt_extended import create_access_token
 #from models import Person
 
 app = Flask(__name__)
 app.url_map.strict_slashes = False
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DB_CONNECTION_STRING')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config["JWT_SECRET_KEY"] = "super-mega-duper-secret"
 MIGRATE = Migrate(app, db)
 db.init_app(app)
 CORS(app)
 setup_admin(app)
+jwt = JWTManager(app)
+
+#Create one endpoint for generating new tokens
+@app.route("/token", methods=["POST"])
+def create_token():
+    username = request.json.get("username", None)
+    password = request.json.get("password", None)
+    # Query your database for username and password
+    user = User.query.filter_by(username=username, password=password).first()
+    if user is None:
+        # the user was not found on the database
+        return jsonify({"msg": "Bad username or password"}), 401
+    
+    # create a new token with the user id inside
+    access_token = create_access_token(identity=user.id)
+    return jsonify({ "token": access_token, "user_id": user.id })
+
 
 # Handle/serialize errors like a JSON object
 @app.errorhandler(APIException)
@@ -31,8 +51,8 @@ def sitemap():
     return generate_sitemap(app)
 
 @app.route('/user', methods=['GET'])
+# @jwt_required()
 def get_user():
-
     users = User.query.all()
     map_users = [u.serialize() for u in users]
     return jsonify(map_users), 200
@@ -45,8 +65,8 @@ def get_single_user(user_id):
     return jsonify(single_user), 200
 
 @app.route('/planet', methods=['GET'])
+# @jwt_required()
 def get_planet():
-
     planets = Planet.query.all()
     map_planets = [u.serialize() for u in planets]
     return jsonify(map_planets), 200
